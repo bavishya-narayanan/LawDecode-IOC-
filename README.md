@@ -6,61 +6,6 @@ LAWDECODE is an open, modular legal-tech platform engineered to assist individua
 
 ---
 
-## Phase 7 Overview
-
-This repository contains **Phase 7** of LAWDECODE — a runnable local legal-information workflow featuring:
-1. **Python FastAPI Backend**: High-performance asynchronous REST API.
-2. **Google Gemini API Integration**: Gemini-only LLM integration reading keys strictly from `.env` without hardcoded credentials.
-3. **Interactive Web Interface**: Single-page application for submitting legal queries, testing model outputs, and viewing agent pipeline statuses.
-4. **Three-Agent Workflow**: Agent 1 (understanding), Agent 2 (research), and Agent 3 (final analysis).
-5. **Local Tools and Memory**: Calculator, date/deadline, legal-text tools, plus local SQLite interaction memory.
-6. **ReAct Workflow**: Gemini selects tools only when needed; concise workflow events remain visible while chain-of-thought stays private.
-7. **Modular Multi-Agent Structure**: Standardized directory structure for autonomous agents:
-   - `agents/legal_understanding_agent/` (Deconstruction & legalese simplification)
-   - `agents/legal_research_agent/` (Statutory frameworks & case law research)
-   - `agents/legal_analysis_agent/` (Risk assessment & strategic recommendations)
-8. **Formatted Terminal Output**: Real-time console logs formatted for verification.
-9. **Portable Local Setup**: Portable across Windows, macOS, and Linux without cloud databases or hardcoded paths.
-
----
-
-## Architecture & Project Structure
-
-```text
-LawDecode/
-├── agents/                           # Modular Multi-Agent System
-│   ├── legal_understanding_agent/    # Agent 1: Parsing & legalese clarification
-│   │   ├── __init__.py
-│   │   └── agent.py
-│   ├── legal_research_agent/         # Agent 2: Precedents & statutory research
-│   │   ├── __init__.py
-│   │   └── agent.py
-│   └── legal_analysis_agent/         # Agent 3: Risk assessment & recommendations
-│       ├── __init__.py
-│       └── agent.py
-├── api/                              # REST API Layer
-│   ├── __init__.py
-│   └── routes.py                     # /api/health, /api/agents, /api/analyze
-├── core/                             # Core Application Logic & Services
-│   ├── __init__.py
-│   ├── config.py                     # Environment and settings configuration
-│   └── gemini_service.py             # Google Gemini API client & terminal logger
-├── frontend/                         # Interactive User Interface
-│   ├── index.html                    # Single-page application HTML
-│   ├── style.css                     # Modern legal-tech CSS styling
-│   └── app.js                        # Client-side API interactions
-├── tools/                            # Calculator, date/deadline, and legal text tools
-├── memory/                            # Local SQLite memory store (database ignored)
-├── screenshots/                       # Optional project screenshots
-├── .env.example                      # Template for environment configuration
-├── .gitignore                        # Git exclusion rules (ignores .env, cache, etc.)
-├── main.py                           # FastAPI application entrypoint
-├── README.md                         # Project documentation
-└── requirements.txt                  # Python package dependencies
-```
-
----
-
 ## Prerequisites
 
 - **Python 3.10+**
@@ -136,6 +81,138 @@ pip install -r requirements.txt
 
 The application uses Gemini only. Replacing `GEMINI_API_KEY` in `.env` with another valid Gemini key does not require source-code changes.
 
+
+## Running the Application
+
+Start the FastAPI application with either of the following commands:
+
+### Option A: Direct Python Execution
+```bash
+python main.py
+```
+On Windows, activate the project environment first:
+```powershell
+.\.venv\Scripts\Activate.ps1
+python main.py
+```
+
+### Option B: Using Uvicorn Directly
+```bash
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+---
+
+## Accessing the Application
+
+Once started, open your web browser to:
+
+- **Web Interface:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Interactive API Documentation (Swagger UI):** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **Alternative API Docs (ReDoc):** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+---
+
+
+# Screenshots
+
+## 1. LAWDECODE Interface
+
+![Screenshot 1](Screenshots/1.png)
+
+## 2. Agent Workflow
+
+![Screenshot 2](Screenshots/2.png)
+
+## 3. Legal Understanding Agent
+
+![Screenshot 3](Screenshots/3.png)
+
+## 4. Legal Research Agent
+
+![Screenshot 4](Screenshots/4.png)
+
+## 5. Legal Analysis Agent
+
+![Screenshot 5](Screenshots/5.png)
+
+## 6. Tool Execution
+
+![Screenshot 6](Screenshots/6.png)
+
+## 7. Memory Retrieval
+
+![Screenshot 7](Screenshots/7.png)
+
+## 8. ReAct Workflow
+
+![Screenshot 8](Screenshots/8.png)
+
+## 9. Terminal Output
+
+![Screenshot 9](Screenshots/9.png)
+
+## 10. Final Analysis
+
+![Screenshot 10](Screenshots/10.png)
+
+
+## Phase 7 Overview
+
+This repository contains **Phase 7** of LAWDECODE — a runnable local legal-information workflow featuring:
+1. **Python FastAPI Backend**: High-performance asynchronous REST API.
+2. **Google Gemini API Integration**: Gemini-only LLM integration reading keys strictly from `.env` without hardcoded credentials.
+3. **Interactive Web Interface**: Single-page application for submitting legal queries, testing model outputs, and viewing agent pipeline statuses.
+4. **Three-Agent Workflow**: Agent 1 (understanding), Agent 2 (research), and Agent 3 (final analysis).
+5. **Local Tools and Memory**: Calculator, date/deadline, legal-text tools, plus local SQLite interaction memory.
+6. **ReAct Workflow**: Gemini selects tools only when needed; concise workflow events remain visible while chain-of-thought stays private.
+7. **Modular Multi-Agent Structure**: Standardized directory structure for autonomous agents:
+   - `agents/legal_understanding_agent/` (Deconstruction & legalese simplification)
+   - `agents/legal_research_agent/` (Statutory frameworks & case law research)
+   - `agents/legal_analysis_agent/` (Risk assessment & strategic recommendations)
+8. **Formatted Terminal Output**: Real-time console logs formatted for verification.
+9. **Portable Local Setup**: Portable across Windows, macOS, and Linux without cloud databases or hardcoded paths.
+
+---
+
+## Architecture & Project Structure
+
+```text
+LawDecode/
+├── agents/                           # Modular Multi-Agent System
+│   ├── legal_understanding_agent/    # Agent 1: Parsing & legalese clarification
+│   │   ├── __init__.py
+│   │   └── agent.py
+│   ├── legal_research_agent/         # Agent 2: Precedents & statutory research
+│   │   ├── __init__.py
+│   │   └── agent.py
+│   └── legal_analysis_agent/         # Agent 3: Risk assessment & recommendations
+│       ├── __init__.py
+│       └── agent.py
+├── api/                              # REST API Layer
+│   ├── __init__.py
+│   └── routes.py                     # /api/health, /api/agents, /api/analyze
+├── core/                             # Core Application Logic & Services
+│   ├── __init__.py
+│   ├── config.py                     # Environment and settings configuration
+│   └── gemini_service.py             # Google Gemini API client & terminal logger
+├── frontend/                         # Interactive User Interface
+│   ├── index.html                    # Single-page application HTML
+│   ├── style.css                     # Modern legal-tech CSS styling
+│   └── app.js                        # Client-side API interactions
+├── tools/                            # Calculator, date/deadline, and legal text tools
+├── memory/                            # Local SQLite memory store (database ignored)
+├── screenshots/                       # Optional project screenshots
+├── .env.example                      # Template for environment configuration
+├── .gitignore                        # Git exclusion rules (ignores .env, cache, etc.)
+├── main.py                           # FastAPI application entrypoint
+├── README.md                         # Project documentation
+└── requirements.txt                  # Python package dependencies
+```
+
+---
+
+
 ## How the Workflow Works
 
 ```text
@@ -174,36 +251,6 @@ Completed interactions are stored in `memory/lawdecode.sqlite3`. The database co
 
 ---
 
-## Running the Application
-
-Start the FastAPI application with either of the following commands:
-
-### Option A: Direct Python Execution
-```bash
-python main.py
-```
-On Windows, activate the project environment first:
-```powershell
-.\.venv\Scripts\Activate.ps1
-python main.py
-```
-
-### Option B: Using Uvicorn Directly
-```bash
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
-```
-
----
-
-## Accessing the Application
-
-Once started, open your web browser to:
-
-- **Web Interface:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- **Interactive API Documentation (Swagger UI):** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- **Alternative API Docs (ReDoc):** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
-
----
 
 ## Terminal Verification Output
 
@@ -244,15 +291,7 @@ The analysis is displayed in the web interface and terminal...
 | `GET` | `/api/agents` | Lists the three active agents |
 | `POST` | `/api/analyze` | Runs memory retrieval, ReAct tool selection, and the three-agent Gemini workflow |
 
-## Screenshots
 
-Place screenshots in `screenshots/` before pushing to GitHub. For example:
-
-```markdown
-![LAWDECODE interface](screenshots/lawdecode-interface.png)
-```
-
----
 
 ## Local Data and GitHub Safety
 
@@ -262,6 +301,4 @@ The local `.env` file and `memory/lawdecode.sqlite3` database are ignored by Git
 
 LAWDECODE provides general legal information for educational and analytical purposes. It is not a substitute for advice from a qualified lawyer. Results may be incomplete or incorrect and should be reviewed against the applicable contract, jurisdiction, and facts.
 
-## Future Roadmap
-
-- **Future:** Additional local-only improvements may be added without introducing cloud databases, RAG, or vector storage unless explicitly requested.
+oud databases, RAG, or vector storage unless explicitly requested.
