@@ -18,7 +18,7 @@ LAWDECODE is an open, modular legal-tech platform engineered to assist individua
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/LawDecode.git
+git clone https://github.com/bavishya-narayanan/LawDecode-IOC-.git
 cd LawDecode
 ```
 
