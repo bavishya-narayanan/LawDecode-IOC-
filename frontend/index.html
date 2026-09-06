@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LAWDECODE - AI Legal Intelligence Platform</title>
+      <meta name="description" content="LAWDECODE Phase 7: Three-agent legal intelligence platform powered by FastAPI and Google Gemini.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Background glow effects -->
+  <div class="glow-bg top-glow" aria-hidden="true"></div>
+  <div class="glow-bg bottom-glow" aria-hidden="true"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="logo-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+            <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+            <path d="M7 21h10"/>
+            <path d="M12 3v18"/>
+            <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title-row">
+            <h1>LAWDECODE</h1>
+            <span class="badge phase-badge" id="badge-phase">PHASE 7</span>
+          </div>
+          <p class="brand-subtitle">AI-Powered Legal Document Intelligence &amp; Analysis Platform</p>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <div class="status-indicator" id="api-status-pill">
+          <span class="status-dot pulse" id="status-dot"></span>
+          <span class="status-label" id="status-text">Checking Environment...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="main-layout">
+      <!-- Left Column: Input & Controls -->
+      <section class="card input-card" aria-labelledby="query-input-title">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <line x1="10" y1="9" x2="8" y2="9"/>
+              </svg>
+            </div>
+            <h2 id="query-input-title">Legal Query &amp; Clause Input</h2>
+          </div>
+          <span class="card-tag">Multi-Agent Pipeline</span>
+        </div>
+
+        <p class="card-description">
+          Submit a legal clause, contract term, or compliance question. Agents 1 and 2 build the context; Agent 3 produces the final analysis.
+        </p>
+
+        <!-- Prompt Presets -->
+        <div class="prompt-chips">
+          <span class="chips-label">Sample Presets:</span>
+          <button type="button" class="chip-btn" id="chip-nda" data-query="Explain the standard scope and typical exceptions for confidentiality obligations in an NDA.">
+            NDA Confidentiality
+          </button>
+          <button type="button" class="chip-btn" id="chip-termination" data-query="Analyze potential legal risks of an immediate termination-for-convenience clause in a SaaS vendor agreement.">
+            Termination for Convenience
+          </button>
+          <button type="button" class="chip-btn" id="chip-indemnity" data-query="Summarize indemnification and limitation of liability obligations under common commercial contracts.">
+            Indemnification Scope
+          </button>
+        </div>
+
+        <!-- Text Input Area -->
+        <div class="textarea-wrapper">
+          <textarea
+            id="query-input"
+            rows="6"
+            placeholder="Type or paste a legal clause, scenario, or query here..."
+            aria-label="Legal text or query input"
+          ></textarea>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+          <div class="model-selector-group">
+            <label for="model-select" class="model-label">Gemini Model:</label>
+            <select id="model-select" class="model-select" aria-label="Select Gemini Model">
+              <option value="gemini-3.5-flash-lite" selected>Gemini 3.5 Flash Lite (Recommended)</option>
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+            </select>
+          </div>
+
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary" id="btn-clear" aria-label="Clear input">
+              Clear
+            </button>
+            <button type="button" class="btn btn-primary" id="btn-analyze" aria-label="Run multi-agent pipeline">
+              <span class="btn-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </span>
+              <span class="btn-text" id="btn-analyze-text">Run Pipeline</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Keyboard hint -->
+        <div class="input-footer-hint">
+          <span>Tip: Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to submit</span>
+        </div>
+      </section>
+
+      <!-- Right Column: Agent 1 Response -->
+      <section class="card response-card" aria-labelledby="agent1-response-title">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon agent1-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+            </div>
+            <h2 id="agent1-response-title">Agent 1 — Legal Understanding</h2>
+          </div>
+          <div class="response-badges">
+            <span class="badge info-badge" id="response-model-badge">Model: Ready</span>
+            <button type="button" class="btn-copy" id="btn-copy" title="Copy Agent 1 Output" style="display: none;">
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="response-placeholder" id="response-placeholder">
+          <div class="placeholder-art" aria-hidden="true">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+          </div>
+          <h3>Awaiting Pipeline Execution</h3>
+          <p>Submit a query to run Agent 1 (Understanding) → Agent 2 (Research).</p>
+        </div>
+
+        <!-- Loading State -->
+        <div class="response-loading" id="response-loading" style="display: none;">
+          <div class="spinner" aria-hidden="true"></div>
+          <p class="loading-text">Running Agent 1 — Legal Understanding...</p>
+          <span class="loading-subtext">Agent 2 will run immediately after. Logs stream to terminal.</span>
+        </div>
+
+        <!-- Error Banner -->
+        <div class="response-error-banner" id="response-error-box" style="display: none;">
+          <div class="error-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <div class="error-content">
+            <h4 id="error-title">Pipeline Error</h4>
+            <div id="error-message" class="error-message-body"></div>
+          </div>
+        </div>
+
+        <!-- Agent 1 Structured Output -->
+        <div class="response-content" id="response-content" style="display: none;">
+          <div class="structured-result" id="structured-result">
+            <div class="result-section">
+              <h4>Main Issue</h4>
+              <p id="res-main-issue"></p>
+            </div>
+            <div class="result-section">
+              <h4>Key Facts</h4>
+              <ul id="res-key-facts"></ul>
+            </div>
+            <div class="result-section">
+              <h4>Parties</h4>
+              <ul id="res-parties"></ul>
+            </div>
+            <div class="result-section">
+              <h4>Legal Concepts</h4>
+              <ul id="res-legal-concepts"></ul>
+            </div>
+            <div class="result-section">
+              <h4>Points for Further Analysis</h4>
+              <ul id="res-points-analysis"></ul>
+            </div>
+            <div class="result-section">
+              <h4>Summary</h4>
+              <p id="res-summary"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal note -->
+        <div class="terminal-note" id="terminal-note" style="display: none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+          <span>All three agent outputs are printed to the terminal under <code>LAWDECODE</code> blocks.</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- Deterministic local tool execution output -->
+    <section class="tools-panel" id="tools-panel" aria-labelledby="tools-title" style="display: none;">
+      <div class="tools-panel-header">
+        <div>
+          <span class="tools-eyebrow">Agent decision log</span>
+          <h2 id="tools-title">Local Tools Used</h2>
+        </div>
+        <span class="badge tools-badge">Phase 5</span>
+      </div>
+      <div class="tools-list" id="tools-list"></div>
+    </section>
+
+    <!-- Persistent local memory output -->
+    <section class="memory-panel" id="memory-panel" aria-labelledby="memory-title" style="display: none;">
+      <div class="memory-panel-header">
+        <div>
+          <span class="memory-eyebrow">Persistent local SQLite context</span>
+          <h2 id="memory-title">Relevant Memory</h2>
+        </div>
+        <span class="badge memory-badge">Local Only</span>
+      </div>
+      <div id="memory-list"></div>
+    </section>
+
+    <!-- Concise ReAct execution timeline -->
+    <section class="workflow-panel" id="workflow-panel" aria-labelledby="workflow-title" style="display: none;">
+      <div class="workflow-panel-header">
+        <div>
+          <span class="workflow-eyebrow">Observe · Decide · Act · Continue</span>
+          <h2 id="workflow-title">Workflow Status</h2>
+        </div>
+        <span class="badge workflow-badge">ReAct</span>
+      </div>
+      <ol class="workflow-list" id="workflow-list"></ol>
+    </section>
+
+    <!-- Agent 2 Research Output Panel -->
+    <section class="agent2-panel" id="agent2-panel" aria-labelledby="agent2-output-title" style="display: none;">
+      <div class="agent2-panel-header">
+        <div class="agent2-title-group">
+          <div class="card-icon research-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <h2 id="agent2-output-title">Agent 2 — Legal Research</h2>
+          <span class="agent2-status-badge" id="agent2-status-badge">Running...</span>
+        </div>
+        <button type="button" class="btn-copy" id="btn-copy-agent2" title="Copy Agent 2 Output" style="display: none;">
+          Copy
+        </button>
+      </div>
+
+      <div class="agent2-grid" id="agent2-grid">
+        <!-- Legal Areas -->
+        <div class="agent2-section">
+          <h4><span class="section-dot areas-dot"></span>Legal Areas</h4>
+          <ul id="res2-legal-areas"></ul>
+        </div>
+        <!-- Applicable Provisions -->
+        <div class="agent2-section">
+          <h4><span class="section-dot provisions-dot"></span>Applicable Provisions</h4>
+          <ul id="res2-provisions"></ul>
+        </div>
+        <!-- Legal Principles -->
+        <div class="agent2-section">
+          <h4><span class="section-dot principles-dot"></span>Legal Principles</h4>
+          <ul id="res2-principles"></ul>
+        </div>
+        <!-- Important Considerations -->
+        <div class="agent2-section">
+          <h4><span class="section-dot considerations-dot"></span>Important Considerations</h4>
+          <ul id="res2-considerations"></ul>
+        </div>
+        <!-- Ambiguities & Conflicts -->
+        <div class="agent2-section">
+          <h4><span class="section-dot ambiguity-dot"></span>Ambiguities &amp; Conflicts</h4>
+          <ul id="res2-ambiguities"></ul>
+        </div>
+        <!-- Points for Agent 3 -->
+        <div class="agent2-section">
+          <h4><span class="section-dot agent3-dot"></span>Points for Agent 3</h4>
+          <ul id="res2-points-agent3"></ul>
+        </div>
+      </div>
+
+      <!-- Research Summary -->
+      <div class="agent2-summary-block" id="agent2-summary-block">
+        <h4>Research Summary</h4>
+        <p id="res2-summary"></p>
+      </div>
+
+      <!-- Agent 2 error (skipped or failed) -->
+      <div class="agent2-error" id="agent2-error" style="display: none;">
+        <span id="agent2-error-msg"></span>
+      </div>
+    </section>
+
+    <!-- Agent 3 Final Analysis Output Panel -->
+    <section class="agent2-panel agent3-panel" id="agent3-panel" aria-labelledby="agent3-output-title" style="display: none;">
+      <div class="agent2-panel-header">
+        <div class="agent2-title-group">
+          <div class="card-icon analysis-icon" aria-hidden="true">$</div>
+          <h2 id="agent3-output-title">Agent 3 - Final Legal Analysis</h2>
+          <span class="agent2-status-badge" id="agent3-status-badge">Running...</span>
+        </div>
+        <button type="button" class="btn-copy" id="btn-copy-agent3" title="Copy Agent 3 Output" style="display: none;">Copy</button>
+      </div>
+      <div class="agent3-result-grid">
+        <div class="agent3-result-section"><h4>Key Legal Issue</h4><p id="res3-key-issue"></p></div>
+        <div class="agent3-result-section"><h4>Legal Interpretation</h4><p id="res3-interpretation"></p></div>
+        <div class="agent3-result-section"><h4>Risks &amp; Concerns</h4><p id="res3-risks"></p></div>
+        <div class="agent3-result-section"><h4>Practical Implications</h4><p id="res3-implications"></p></div>
+        <div class="agent3-result-section"><h4>Final Conclusion</h4><p id="res3-conclusion"></p></div>
+        <div class="agent3-result-section disclaimer-section"><h4>AI Legal-Information Disclaimer</h4><p id="res3-disclaimer"></p></div>
+      </div>
+      <div class="agent2-error" id="agent3-error" style="display: none;"><span id="agent3-error-msg"></span></div>
+    </section>
+
+    <!-- Multi-Agent Architecture Overview -->
+    <section class="agents-section" aria-labelledby="agents-title">
+      <div class="section-title-row">
+        <div>
+          <h2 id="agents-title" class="section-heading">Multi-Agent Architecture</h2>
+          <p class="section-subheading">Three specialized agents with local tools, memory, and a Gemini ReAct workflow.</p>
+        </div>
+          <span class="badge blueprint-badge">Phase 7 - ReAct Active</span>
+      </div>
+
+      <div class="agents-grid">
+        <!-- Agent 1 Card -->
+        <article class="agent-card agent-card--active" id="card-agent-1">
+          <div class="agent-card-top">
+            <div class="agent-num">01</div>
+            <span class="agent-tag agent-tag--active">Phase 2 Active</span>
+          </div>
+          <div class="agent-avatar understanding-avatar" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+          </div>
+          <h3 class="agent-name">Legal Understanding Agent</h3>
+          <p class="agent-role">Deconstructs dense legalese, parses contractual clauses, and structures the legal matter for downstream agents.</p>
+          <div class="agent-features">
+            <div class="feature-item"><span class="check-icon">✓</span><span>Main issue extraction</span></div>
+            <div class="feature-item"><span class="check-icon">✓</span><span>Key facts &amp; party identification</span></div>
+            <div class="feature-item"><span class="check-icon">✓</span><span>Legal concept recognition</span></div>
+          </div>
+          <div class="agent-status-footer">
+            <span class="agent-pulse-dot active-dot"></span>
+            <span class="agent-status-label" id="agent-1-status">Active</span>
+          </div>
+        </article>
+
+        <!-- Agent 2 Card -->
+        <article class="agent-card agent-card--active" id="card-agent-2">
+          <div class="agent-card-top">
+            <div class="agent-num">02</div>
+            <span class="agent-tag agent-tag--active">Phase 3 Active</span>
+          </div>
+          <div class="agent-avatar research-avatar" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <h3 class="agent-name">Legal Research Agent</h3>
+          <p class="agent-role">Identifies applicable legal areas, relevant provisions, principles, ambiguities, and points for Agent 3 to analyze.</p>
+          <div class="agent-features">
+            <div class="feature-item"><span class="check-icon">✓</span><span>Legal area identification</span></div>
+            <div class="feature-item"><span class="check-icon">✓</span><span>Applicable provisions mapping</span></div>
+            <div class="feature-item"><span class="check-icon">✓</span><span>Ambiguity &amp; conflict detection</span></div>
+          </div>
+          <div class="agent-status-footer">
+            <span class="agent-pulse-dot active-dot"></span>
+            <span class="agent-status-label" id="agent-2-status">Active</span>
+          </div>
+        </article>
+
+        <!-- Agent 3 Card -->
+        <article class="agent-card" id="card-agent-3">
+          <div class="agent-card-top">
+            <div class="agent-num">03</div>
+            <span class="agent-tag agent-tag--active">Phase 4 Active</span>
+          </div>
+          <div class="agent-avatar analysis-avatar" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <h3 class="agent-name">Legal Analysis Agent</h3>
+          <p class="agent-role">Assesses legal risk, flags unfavorable clauses, and synthesizes strategic recommendations based on Agents 1 &amp; 2.</p>
+          <div class="agent-features">
+            <div class="feature-item"><span class="check-icon">✓</span><span>Legal interpretation</span></div>
+            <div class="feature-item"><span class="check-icon">✓</span><span>Risk &amp; concern assessment</span></div>
+            <div class="feature-item"><span class="check-icon">✓</span><span>Practical implications</span></div>
+          </div>
+          <div class="agent-status-footer">
+            <span class="agent-pulse-dot active-dot"></span>
+            <span class="agent-status-label" id="agent-3-status">Active</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-left">
+        <span class="footer-logo">LAWDECODE</span>
+        <span class="footer-sep">•</span>
+        <span>Phase 7 - ReAct Workflow Active</span>
+      </div>
+      <div class="footer-right">
+        <span>FastAPI + Google Gemini API</span>
+        <span class="footer-sep">•</span>
+        <a href="/docs" target="_blank" rel="noopener" class="footer-link">API Swagger Docs</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
